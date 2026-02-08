@@ -465,15 +465,15 @@ void keyball_oled_render_keyinfo(void) {
     // oled_write_P(PSTR("Key \xB1"), false);
 
     // Row and column
-    oled_write_char('\xB8', false);
-    oled_write_char(to_1x(keyball.last_pos.row), false);
-    oled_write_char('\xB9', false);
-    oled_write_char(to_1x(keyball.last_pos.col), false);
+    // oled_write_char('\xB8', false);
+    // oled_write_char(to_1x(keyball.last_pos.row), false);
+    // oled_write_char('\xB9', false);
+    // oled_write_char(to_1x(keyball.last_pos.col), false);
 
-    // Keycode
-    oled_write_P(PSTR("\xBA\xBB"), false);
-    oled_write_char(to_1x(keyball.last_kc >> 4), false);
-    oled_write_char(to_1x(keyball.last_kc), false);
+    // // Keycode
+    // oled_write_P(PSTR("\xBA\xBB"), false);
+    // oled_write_char(to_1x(keyball.last_kc >> 4), false);
+    // oled_write_char(to_1x(keyball.last_kc), false);
 
     // Pressing keys
     oled_write_P(PSTR("  "), false);
