@@ -462,7 +462,7 @@ void keyball_oled_render_keyinfo(void) {
     //     Ball:   0   0   0   0
 
     // "Key" Label
-    oled_write_P(PSTR("Key \xB1"), false);
+    // oled_write_P(PSTR("Key \xB1"), false);
 
     // Row and column
     oled_write_char('\xB8', false);
