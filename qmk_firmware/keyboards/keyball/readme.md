@@ -1,6 +1,6 @@
 # Keyball series
 
-This directory includes source code of Keyball keyboard series:
+TThis directory includes source code of Keyball keyboard series:
 
 | Name          | Description
 |---------------|-------------------------------------------------------------
