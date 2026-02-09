@@ -99,7 +99,7 @@ void oledkit_render_info_user(void) {
     // keyball_oled_render_ballinfo();
     // keyball_oled_render_layerinfo();
     // 動きがある場合だけ移動
-    if (move_right) {
+  if (move_right) {
       dot_x++;
       if (dot_x > 124) { // 右端制限（ドット幅 4 を考慮）
           dot_x = 124;
