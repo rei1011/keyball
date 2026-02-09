@@ -67,8 +67,11 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 #    include "lib/oledkit/oledkit.h"
 
 void oledkit_render_info_user(void) {
-    keyball_oled_render_keyinfo();
-    keyball_oled_render_ballinfo();
-    keyball_oled_render_layerinfo();
+    // keyball_oled_render_keyinfo();
+    // keyball_oled_render_ballinfo();
+    // keyball_oled_render_layerinfo();
+    for (int i = 0; i < 4; i++) {
+      oled_write_pixel(62 + i, 31, true);
+    }
 }
 #endif
