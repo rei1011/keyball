@@ -12,7 +12,6 @@
     "layouts": {
       "LAYOUT_no_ball": {
         "layout": [
-          { "label": "L00", "x": 0, "y": 0 },
           { "label": "L01", "x": 1, "y": 0 },
           { "label": "L02", "x": 2, "y": 0 },
           { "label": "L03", "x": 3, "y": 0 },
