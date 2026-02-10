@@ -105,9 +105,6 @@ void oledkit_render_paddle(void) {
         dot_x--;
     }
   
-    // 表示をクリア
-    oled_clear();
-  
     // paddle（幅4、高さ1）の描画
     for (int i = 0; i < 4; i++) {
         oled_write_pixel(dot_x + i, MAX_Y, true);
@@ -137,9 +134,7 @@ void oledkit_render_bouncing_dot(void) {
             dot_y = MAX_Y;
             dir   = -1;
         }
-    }
-
-    oled_clear();
+    }    
 
     // 幅3・高さ3のドット（中心が BOUNCING_DOT_CENTER_X, dot_y）
     for (int dx = -1; dx <= 1; dx++) {
@@ -157,6 +152,7 @@ void oledkit_render_info_user(void) {
     // keyball_oled_render_keyinfo();
     // keyball_oled_render_ballinfo();
     // keyball_oled_render_layerinfo();
+    oled_clear();
     oledkit_render_paddle();
     // 幅3x3のドットが x=64 上を y 方向に往復する表示を使う場合は以下に差し替え:
     oledkit_render_bouncing_dot();
