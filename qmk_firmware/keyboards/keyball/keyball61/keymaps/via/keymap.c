@@ -66,63 +66,10 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 #    include "lib/oledkit/oledkit.h"
 
-// // ドットの X 座標（OLED 左端 0 〜 127）
-// static int dot_x = 62; // 初期位置（中央付近）
-
-// // 移動方向フラグ
-// static bool move_right = false;
-// static bool move_left  = false;
-
-// bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-//   switch (keycode) {
-//       case KC_UP:   // 上矢印
-//           if (record->event.pressed) {
-//               move_right = true;
-//           } else {
-//               move_right = false;
-//           }
-//           return true;
-
-//       case KC_DOWN: // 下矢印
-//           if (record->event.pressed) {
-//               move_left = true;
-//           } else {
-//               move_left = false;
-//           }
-//           return true;
-//   }
-//   return true;
-// }
-
 void oledkit_render_info_user(void) {
     // keyball_oled_render_keyinfo();
     // keyball_oled_render_ballinfo();
     // keyball_oled_render_layerinfo();
-    // 動きがある場合だけ移動
-  // if (move_right) {
-  //     dot_x++;
-  //     if (dot_x > 124) { // 右端制限（ドット幅 4 を考慮）
-  //         dot_x = 124;
-  //     }
-  // }
-  // if (move_left) {
-  //     dot_x--;
-  //     if (dot_x < 0) {
-  //         dot_x = 0;
-  //     }
-  // }
-
-  // // 表示をクリア
-  // oled_clear();
-
-  // // 最下段 Y 座標を計算
-  // const int bottom_y = 31; // 32px なら 31, 64px なら 63
-
-  // // 幅 4 × 高さ 1 のドットを描画
-  // for (int i = 0; i < 4; i++) {
-  //     oled_write_pixel(dot_x + i, bottom_y, true);
-  // }
-
   oledkit_render_paddle();
 }
 #endif
