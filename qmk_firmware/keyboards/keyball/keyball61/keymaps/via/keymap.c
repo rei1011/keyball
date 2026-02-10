@@ -66,6 +66,60 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 #    include "lib/oledkit/oledkit.h"
 
+// OLEDの幅
+static const int MAX_X = 124;
+// OLEDの高さ
+static const int MAX_Y = 31;
+// paddleのX座標の初期値（中央付近）
+static int dot_x = 62;
+// 移動方向フラグ
+static bool move_right = false;
+static bool move_left  = false;
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case KC_UP:   // 上矢印
+            if (record->event.pressed) {
+                move_right = true;
+            } else {
+                move_right = false;
+            }
+            return true;
+  
+        case KC_DOWN: // 下矢印
+            if (record->event.pressed) {
+                move_left = true;
+            } else {
+                move_left = false;
+            }
+            return true;
+    }
+    return true;
+}
+
+void oledkit_render_paddle(void) {
+    if (move_right) {
+        dot_x++;
+        if (dot_x > MAX_X) {
+            dot_x = MAX_X;
+        }
+    }
+    if (move_left) {
+        dot_x--;
+        if (dot_x < 0) {
+            dot_x = 0;
+        }
+    }
+  
+    // 表示をクリア
+    oled_clear();
+  
+    // paddle（幅4、高さ1）の描画
+    for (int i = 0; i < 4; i++) {
+        oled_write_pixel(dot_x + i, MAX_Y, true);
+    }
+}
+
 void oledkit_render_info_user(void) {
     // keyball_oled_render_keyinfo();
     // keyball_oled_render_ballinfo();
