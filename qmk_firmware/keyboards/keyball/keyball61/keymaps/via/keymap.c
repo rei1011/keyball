@@ -112,8 +112,8 @@ void oledkit_render_paddle(void) {
 }
 
 // 幅3・高さ3のドットが x=64 上を y 方向に往復する表示（1秒に1ドット）
-#define BOUNCING_DOT_CENTER_X 64
-#define BOUNCING_DOT_SPEED_MS 1000
+static const int BOUNCING_DOT_CENTER_X = 64;
+static const int BOUNCING_DOT_SPEED_MS = 1000;
 
 void oledkit_render_bouncing_dot(void) {
     static int       dot_y          = 16;  // 開始位置 y=16
