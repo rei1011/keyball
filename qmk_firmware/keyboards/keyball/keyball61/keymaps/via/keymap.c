@@ -114,10 +114,51 @@ void oledkit_render_paddle(void) {
     }
 }
 
+// 幅3・高さ3のドットが x=64 上を y 方向に往復する表示（1秒に1ドット）
+#define BOUNCING_DOT_CENTER_X 64
+#define BOUNCING_DOT_SPEED_MS 1000
+
+void oledkit_render_bouncing_dot(void) {
+    static int       dot_y          = 16;  // 開始位置 y=16
+    static int       dir            = -1;  // 最初は y のマイナス方向
+    static uint32_t  last_move_time = 0;
+
+    uint32_t now = timer_read32();
+    if (last_move_time == 0) {
+        last_move_time = now;
+    }
+    if (timer_elapsed32(last_move_time) >= BOUNCING_DOT_SPEED_MS) {
+        last_move_time = now;
+        dot_y += dir;
+        if (dot_y <= 0) {
+            dot_y = 0;
+            dir   = 1;
+        } else if (dot_y >= MAX_Y) {
+            dot_y = MAX_Y;
+            dir   = -1;
+        }
+    }
+
+    oled_clear();
+
+    // 幅3・高さ3のドット（中心が BOUNCING_DOT_CENTER_X, dot_y）
+    for (int dx = -1; dx <= 1; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+            int px = BOUNCING_DOT_CENTER_X + dx;
+            int py = dot_y + dy;
+            if (py >= 0 && py <= MAX_Y) {
+                oled_write_pixel(px, py, true);
+            }
+        }
+    }
+}
+
 void oledkit_render_info_user(void) {
     // keyball_oled_render_keyinfo();
     // keyball_oled_render_ballinfo();
     // keyball_oled_render_layerinfo();
-  oledkit_render_paddle();
+    oledkit_render_paddle();
+    // 幅3x3のドットが x=64 上を y 方向に往復する表示を使う場合は以下に差し替え:
+    oledkit_render_bouncing_dot();
 }
 #endif
