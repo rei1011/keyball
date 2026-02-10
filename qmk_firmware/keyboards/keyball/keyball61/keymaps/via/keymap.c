@@ -98,17 +98,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 void oledkit_render_paddle(void) {
-    if (move_right) {
+    if (move_right && dot_x < MAX_X) {
         dot_x++;
-        if (dot_x > MAX_X) {
-            dot_x = MAX_X;
-        }
     }
-    if (move_left) {
+    if (move_left && dot_x > 0) {
         dot_x--;
-        if (dot_x < 0) {
-            dot_x = 0;
-        }
     }
   
     // 表示をクリア
