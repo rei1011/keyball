@@ -224,6 +224,9 @@ void keyball_oled_render_keyinfo(void);
 /// inactive layers.
 void keyball_oled_render_layerinfo(void);
 
+// oledkit_render_paddle renders paddle information to OLED.
+void oledkit_render_paddle(void);
+
 /// keyball_get_scroll_mode gets current scroll mode.
 bool keyball_get_scroll_mode(void);
 
