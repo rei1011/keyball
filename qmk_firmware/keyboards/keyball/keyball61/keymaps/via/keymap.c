@@ -68,7 +68,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 static const int OLED_W = 128;
 static const int OLED_H = 32;
-static const int PADDLE_WIDTH = 20;
+static const int PADDLE_WIDTH = 24;
 // 移動方向フラグ
 static bool move_right = false;
 static bool move_left  = false;
@@ -102,7 +102,7 @@ static void oledkit_render_paddle(void) {
     // paddleが移動できる最大X座標
     const int MAX_X = OLED_W - PADDLE_WIDTH;
     // paddleの速さ
-    const int PADDLE_SPEED = 6;
+    const int PADDLE_SPEED = 3;
 
     if (move_right && paddle_x < MAX_X) {
         paddle_x += PADDLE_SPEED;
