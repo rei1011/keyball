@@ -98,8 +98,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 void oledkit_render_paddle(void) {
     // paddleのX座標の初期値（中央付近）
     static int paddle_x = (OLED_W / 2) - 2;
-    const int max_x = OLED_W - 4;
-    const int max_y = OLED_H - 1;
+    // paddleのY座標
+    const int paddle_y = OLED_H - 1;
+    // paddleの幅
+    const int paddle_width = 20;
+    // paddleが移動できる最大X座標
+    const int max_x = OLED_W - paddle_width;
     
     if (move_right && paddle_x < max_x) {
         paddle_x++;
@@ -109,8 +113,8 @@ void oledkit_render_paddle(void) {
     }
   
     // paddle（幅4、高さ1）の描画
-    for (int i = 0; i < 4; i++) {
-        oled_write_pixel(paddle_x + i, max_y, true);
+    for (int i = 0; i < paddle_width; i++) {
+        oled_write_pixel(paddle_x + i, paddle_y, true);
     }
 }
 
