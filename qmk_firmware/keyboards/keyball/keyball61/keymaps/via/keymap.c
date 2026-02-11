@@ -118,37 +118,39 @@ void oledkit_render_paddle(void) {
     }
 }
 
-void oledkit_render_bouncing_dot(void) {
-    static const int SPEED = 3;
-    static int velocity = SPEED;
-    static int       dot_y          = OLED_H / 2;  // 開始位置 y=16
-    static uint32_t  last_move_time = 0;
-    const int max_y = OLED_H - 1;
-    const int center_x = OLED_W / 2;
-    const int bouncing_dot_speed_ms = 10;
+void oledkit_render_ball(void) {
+    // ボールが10msで移動するドット数
+    const int BALL_SPEED = 3;
+    const int BALL_SPEED_MS = 10;
+    const int MAX_Y = OLED_H - 1;
+    const int CENTER_X = OLED_W / 2;
 
+    static int velocity = BALL_SPEED;
+    static int dot_y = OLED_H / 2;  // 開始位置 y=16
+    static uint32_t last_move_time = 0;
     uint32_t now = timer_read32();
+
     if (last_move_time == 0) {
         last_move_time = now;
     }
-    if (timer_elapsed32(last_move_time) >= bouncing_dot_speed_ms) {
+    if (timer_elapsed32(last_move_time) >= BALL_SPEED_MS) {
         last_move_time = now;
         dot_y += velocity;
         if (dot_y <= 0) {
             dot_y = 0;
-            dir   = SPEED;
-        } else if (dot_y >= max_y) {
-            dot_y = max_y;
-            dir   = -SPEED;
+            velocity   = BALL_SPEED;
+        } else if (dot_y >= MAX_Y) {
+            dot_y = MAX_Y;
+            velocity   = -BALL_SPEED;
         }
     }    
 
     // 幅3・高さ3のドット（中心が center_x, dot_y）
     for (int dx = -1; dx <= 1; dx++) {
         for (int dy = -1; dy <= 1; dy++) {
-            int px = center_x + dx;
+            int px = CENTER_X + dx;
             int py = dot_y + dy;
-            if (py >= 0 && py <= max_y) {
+            if (py >= 0 && py <= MAX_Y) {
                 oled_write_pixel(px, py, true);
             }
         }
@@ -162,6 +164,6 @@ void oledkit_render_info_user(void) {
     oled_clear();
     oledkit_render_paddle();
     // 幅3x3のドットが x=64 上を y 方向に往復する表示を使う場合は以下に差し替え:
-    oledkit_render_bouncing_dot();
+    oledkit_render_ball();
 }
 #endif
