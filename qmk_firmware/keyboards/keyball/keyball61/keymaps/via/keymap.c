@@ -96,7 +96,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-void oledkit_render_paddle(void) {
+static void oledkit_render_paddle(void) {
     // paddleのY座標
     const int PADDLE_Y = OLED_H - 1;
     // paddleが移動できる最大X座標
@@ -117,7 +117,15 @@ void oledkit_render_paddle(void) {
     }
 }
 
-void oledkit_render_ball(void) {
+/** ボールがパドルに衝突したかどうかを判定する */
+static bool ball_hits_paddle(int velocity, int ball_center_x, int ball_radius) {
+    int ball_left   = ball_center_x - ball_radius;
+    int ball_right  = ball_center_x + ball_radius;
+    int paddle_right = paddle_x + PADDLE_WIDTH - 1;
+    return (velocity > 0) && (ball_right >= paddle_x && ball_left <= paddle_right);
+}
+
+static void oledkit_render_ball(void) {
     // ボールが10msで移動するドット数
     const int BALL_SPEED = 3;
     const int BALL_SPEED_MS = 10;
@@ -158,12 +166,7 @@ void oledkit_render_ball(void) {
             ball_y = 0;
             velocity = BALL_SPEED;
         } else if (ball_y >= MAX_Y) {
-            // 床（パドル付近）に到達
-            // ボールがy軸マイナス方向（下向き、velocity > 0）に進んでいるときのみパドル衝突で反転
-            int ball_left  = CENTER_X - 1;
-            int ball_right = CENTER_X + 1;
-            int paddle_right = paddle_x + PADDLE_WIDTH - 1;
-            bool hit_paddle = (velocity > 0) && (ball_right >= paddle_x && ball_left <= paddle_right);
+            bool hit_paddle = ball_hits_paddle(velocity, CENTER_X, BALL_RADIUS);
             if (hit_paddle) {
                 ball_y = MAX_Y;
                 velocity = -BALL_SPEED;
