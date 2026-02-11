@@ -123,6 +123,7 @@ void oledkit_render_ball(void) {
     const int BALL_SPEED_MS = 10;
     const int MAX_Y = OLED_H - 1;
     const int CENTER_X = OLED_W / 2;
+    const int BALL_RADIUS = 1;
     // ボールの初期位置
     const int INITIAL_BALL_Y = OLED_H / 2;
 
@@ -158,9 +159,8 @@ void oledkit_render_ball(void) {
         }
     }
 
-    // 幅3・高さ3のドット（中心が center_x, ball_y）
-    for (int dx = -1; dx <= 1; dx++) {
-        for (int dy = -1; dy <= 1; dy++) {
+    for (int dx = -BALL_RADIUS; dx <= BALL_RADIUS; dx++) {
+        for (int dy = -BALL_RADIUS; dy <= BALL_RADIUS; dy++) {
             int px = CENTER_X + dx;
             int py = ball_y + dy;
             if (py >= 0 && py <= MAX_Y) {
