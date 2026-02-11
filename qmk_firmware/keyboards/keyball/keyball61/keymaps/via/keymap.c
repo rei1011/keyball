@@ -67,11 +67,9 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 #    include "lib/oledkit/oledkit.h"
 
 // OLEDの幅
-static const int MAX_X = 124;
+static const int OLED_W = 128;
 // OLEDの高さ
-static const int MAX_Y = 31;
-// paddleのX座標の初期値（中央付近）
-static int dot_x = 62;
+static const int OLED_H = 32;
 // 移動方向フラグ
 static bool move_right = false;
 static bool move_left  = false;
@@ -98,50 +96,55 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 void oledkit_render_paddle(void) {
-    if (move_right && dot_x < MAX_X) {
-        dot_x++;
+    // paddleのX座標の初期値（中央付近）
+    static int paddle_x = (OLED_W / 2) - 2;
+    const int max_x = OLED_W - 4;
+    const int max_y = OLED_H - 1;
+    
+    if (move_right && paddle_x < max_x) {
+        paddle_x++;
     }
-    if (move_left && dot_x > 0) {
-        dot_x--;
+    if (move_left && paddle_x > 0) {
+        paddle_x--;
     }
   
     // paddle（幅4、高さ1）の描画
     for (int i = 0; i < 4; i++) {
-        oled_write_pixel(dot_x + i, MAX_Y, true);
+        oled_write_pixel(paddle_x + i, max_y, true);
     }
 }
 
-// 幅3・高さ3のドットが x=64 上を y 方向に往復する表示（1秒に1ドット）
-static const int BOUNCING_DOT_CENTER_X = 64;
-static const int BOUNCING_DOT_SPEED_MS = 1000;
-
 void oledkit_render_bouncing_dot(void) {
-    static int       dot_y          = 16;  // 開始位置 y=16
+    static int       dot_y          = OLED_H / 2;  // 開始位置 y=16
     static int       dir            = -1;  // 最初は y のマイナス方向
     static uint32_t  last_move_time = 0;
+    const int max_y = OLED_H - 1;
+    const int center_x = OLED_W / 2;
+    // 幅3・高さ3のドットが x=64 上を y 方向に往復する表示（1秒に1ドット）
+    const int bouncing_dot_speed_ms = 1000;
 
     uint32_t now = timer_read32();
     if (last_move_time == 0) {
         last_move_time = now;
     }
-    if (timer_elapsed32(last_move_time) >= BOUNCING_DOT_SPEED_MS) {
+    if (timer_elapsed32(last_move_time) >= bouncing_dot_speed_ms) {
         last_move_time = now;
         dot_y += dir;
         if (dot_y <= 0) {
             dot_y = 0;
             dir   = 1;
-        } else if (dot_y >= MAX_Y) {
-            dot_y = MAX_Y;
+        } else if (dot_y >= max_y) {
+            dot_y = max_y;
             dir   = -1;
         }
     }    
 
-    // 幅3・高さ3のドット（中心が BOUNCING_DOT_CENTER_X, dot_y）
+    // 幅3・高さ3のドット（中心が center_x, dot_y）
     for (int dx = -1; dx <= 1; dx++) {
         for (int dy = -1; dy <= 1; dy++) {
-            int px = BOUNCING_DOT_CENTER_X + dx;
+            int px = center_x + dx;
             int py = dot_y + dy;
-            if (py >= 0 && py <= MAX_Y) {
+            if (py >= 0 && py <= max_y) {
                 oled_write_pixel(px, py, true);
             }
         }
