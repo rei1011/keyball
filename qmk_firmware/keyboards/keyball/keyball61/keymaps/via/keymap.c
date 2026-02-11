@@ -128,7 +128,7 @@ void oledkit_render_ball(void) {
     const int CENTER_X = OLED_W / 2;
 
     static int velocity = BALL_SPEED;
-    static int dot_y = OLED_H / 2;  // 開始位置 y=16
+    static int ball_y = OLED_H / 2;  // 開始位置 y=16
     static uint32_t last_move_time = 0;
     uint32_t now = timer_read32();
 
@@ -137,21 +137,21 @@ void oledkit_render_ball(void) {
     }
     if (timer_elapsed32(last_move_time) >= BALL_SPEED_MS) {
         last_move_time = now;
-        dot_y += velocity;
-        if (dot_y <= 0) {
-            dot_y = 0;
+        ball_y += velocity;
+        if (ball_y <= 0) {
+            ball_y = 0;
             velocity   = BALL_SPEED;
-        } else if (dot_y >= MAX_Y) {
-            dot_y = MAX_Y;
+        } else if (ball_y >= MAX_Y) {
+            ball_y = MAX_Y;
             velocity   = -BALL_SPEED;
         }
     }    
 
-    // 幅3・高さ3のドット（中心が center_x, dot_y）
+    // 幅3・高さ3のドット（中心が center_x, ball_y）
     for (int dx = -1; dx <= 1; dx++) {
         for (int dy = -1; dy <= 1; dy++) {
             int px = CENTER_X + dx;
-            int py = dot_y + dy;
+            int py = ball_y + dy;
             if (py >= 0 && py <= MAX_Y) {
                 oled_write_pixel(px, py, true);
             }
