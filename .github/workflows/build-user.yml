@@ -8,9 +8,9 @@ on:
         required: true
         type: choice
         options:
+        - keyball61
         - keyball39
         - keyball44
-        - keyball61
         - keyball46
         - one47
       keymap:

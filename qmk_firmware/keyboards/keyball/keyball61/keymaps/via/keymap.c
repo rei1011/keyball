@@ -125,7 +125,7 @@ void oledkit_render_bouncing_dot(void) {
     const int max_y = OLED_H - 1;
     const int center_x = OLED_W / 2;
     // 幅3・高さ3のドットが x=64 上を y 方向に往復する表示（1秒に1ドット）
-    const int bouncing_dot_speed_ms = 1;
+    const int bouncing_dot_speed_ms = 0.1;
 
     uint32_t now = timer_read32();
     if (last_move_time == 0) {
