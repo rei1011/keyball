@@ -126,11 +126,27 @@ void oledkit_render_ball(void) {
     const int BALL_RADIUS = 1;
     // ボールの初期位置
     const int INITIAL_BALL_Y = OLED_H / 2;
+    // パドルに外れたあと、初期位置に戻るまでの待ち時間（ミリ秒）
+    const uint32_t BALL_RESPAWN_MS = 2000;
 
     static int velocity = BALL_SPEED;
     static int ball_y = INITIAL_BALL_Y;
     static uint32_t last_move_time = 0;
+    static bool ball_hidden = false;
+    static uint32_t ball_hidden_since = 0;
     uint32_t now = timer_read32();
+
+    // ボールが消えてから一定時間経過後に初期位置に戻る
+    if (ball_hidden) {
+        if (timer_elapsed32(ball_hidden_since) >= BALL_RESPAWN_MS) {
+            ball_y = INITIAL_BALL_Y;
+            velocity = BALL_SPEED;
+            ball_hidden = false;
+            last_move_time = now;
+        } else {
+            return;
+        }
+    }
 
     if (last_move_time == 0) {
         last_move_time = now;
@@ -152,9 +168,10 @@ void oledkit_render_ball(void) {
                 ball_y = MAX_Y;
                 velocity = -BALL_SPEED;
             } else {
-                // パドルに当たっていない、または上向きで来た → 初期位置に戻す
-                ball_y = INITIAL_BALL_Y;
-                velocity = BALL_SPEED;
+                // ボールが衝突しなかった場合、ボールを描画しない
+                ball_hidden = true;
+                ball_hidden_since = now;
+                return;
             }
         }
     }
