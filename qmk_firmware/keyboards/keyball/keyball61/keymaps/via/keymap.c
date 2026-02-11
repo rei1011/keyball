@@ -118,11 +118,28 @@ static void oledkit_render_paddle(void) {
 }
 
 /** ボールがパドルに衝突したかどうかを判定する */
-static bool ball_hits_paddle(int velocity, int ball_center_x, int ball_radius) {
+static bool ball_hits_paddle(int velocity_y, int ball_center_x, int ball_radius) {
     int ball_left   = ball_center_x - ball_radius;
     int ball_right  = ball_center_x + ball_radius;
     int paddle_right = paddle_x + PADDLE_WIDTH - 1;
-    return (velocity > 0) && (ball_right >= paddle_x && ball_left <= paddle_right);
+    return (velocity_y > 0) && (ball_right >= paddle_x && ball_left <= paddle_right);
+}
+
+/**
+ * パドルへの衝突位置に応じてボールの速度を設定する。
+ * パドル右側に当たる → 右上方向、左側に当たる → 左上方向に反射する。
+ */
+static void reflect_ball_from_paddle(int ball_center_x, int *velocity_x, int *velocity_y, int ball_speed) {
+    int paddle_center = paddle_x + PADDLE_WIDTH / 2;
+    // 衝突位置: -1（左端）〜 +1（右端）
+    int half_w = PADDLE_WIDTH / 2;
+    int hit_offset = ball_center_x - paddle_center;
+    if (half_w <= 0) half_w = 1;
+    if (hit_offset > half_w) hit_offset = half_w;
+    if (hit_offset < -half_w) hit_offset = -half_w;
+    // 右側に当たる → 正の velocity_x、左側 → 負の velocity_x
+    *velocity_x = (hit_offset * ball_speed) / half_w;
+    *velocity_y = -ball_speed;
 }
 
 static void oledkit_render_ball(void) {
@@ -130,6 +147,7 @@ static void oledkit_render_ball(void) {
     const int BALL_SPEED = 3;
     const int BALL_SPEED_MS = 10;
     const int MAX_Y = OLED_H - 1;
+    const int MAX_X = OLED_W - 1;
     const int CENTER_X = OLED_W / 2;
     const int BALL_RADIUS = 1;
     // ボールの初期位置
@@ -137,7 +155,9 @@ static void oledkit_render_ball(void) {
     // パドルに外れたあと、初期位置に戻るまでの待ち時間（ミリ秒）
     const uint32_t BALL_RESPAWN_MS = 1500;
 
-    static int velocity = BALL_SPEED;
+    static int velocity_y = BALL_SPEED;
+    static int velocity_x = 0;
+    static int ball_x = CENTER_X;
     static int ball_y = INITIAL_BALL_Y;
     static uint32_t last_move_time = 0;
     static bool ball_hidden = false;
@@ -149,8 +169,10 @@ static void oledkit_render_ball(void) {
         if (timer_elapsed32(ball_hidden_since) < BALL_RESPAWN_MS) {
           return;
         }
+        ball_x = CENTER_X;
         ball_y = INITIAL_BALL_Y;
-        velocity = BALL_SPEED;
+        velocity_x = 0;
+        velocity_y = BALL_SPEED;
         ball_hidden = false;
     }
 
@@ -159,29 +181,41 @@ static void oledkit_render_ball(void) {
     }
     if (timer_elapsed32(last_move_time) >= BALL_SPEED_MS) {
         last_move_time = now;
-        ball_y += velocity;
+        ball_y += velocity_y;
+        ball_x += velocity_x;
+
         if (ball_y <= 0) {
             ball_y = 0;
-            velocity = BALL_SPEED;
+            velocity_y = BALL_SPEED;
+            velocity_x = 0;
         } else if (ball_y >= MAX_Y) {
-            bool hit_paddle = ball_hits_paddle(velocity, CENTER_X, BALL_RADIUS);
+            bool hit_paddle = ball_hits_paddle(velocity_y, ball_x, BALL_RADIUS);
             if (hit_paddle) {
                 ball_y = MAX_Y;
-                velocity = -BALL_SPEED;
+                reflect_ball_from_paddle(ball_x, &velocity_x, &velocity_y, BALL_SPEED);
             } else {
-                // ボールが衝突しなかった場合、ボールを描画しない
                 ball_hidden = true;
                 ball_hidden_since = now;
                 return;
             }
         }
+
+        // 左右の壁で反射
+        if (ball_x - BALL_RADIUS <= 0) {
+            ball_x = BALL_RADIUS;
+            velocity_x = -velocity_x;
+        }
+        if (ball_x + BALL_RADIUS >= OLED_W) {
+            ball_x = OLED_W - 1 - BALL_RADIUS;
+            velocity_x = -velocity_x;
+        }
     }
 
     for (int dx = -BALL_RADIUS; dx <= BALL_RADIUS; dx++) {
         for (int dy = -BALL_RADIUS; dy <= BALL_RADIUS; dy++) {
-            int px = CENTER_X + dx;
+            int px = ball_x + dx;
             int py = ball_y + dy;
-            if (py >= 0 && py <= MAX_Y) {
+            if (px >= 0 && px <= MAX_X && py >= 0 && py <= MAX_Y) {
                 oled_write_pixel(px, py, true);
             }
         }
