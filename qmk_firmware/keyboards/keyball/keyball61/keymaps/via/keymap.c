@@ -144,7 +144,7 @@ static void reflect_ball_from_paddle(int ball_center_x, int *velocity_x, int *ve
 
 static void oledkit_render_ball(void) {
     // ボールが10msで移動するドット数
-    const int BALL_SPEED = 3;
+    const int BALL_SPEED = 4;
     const int BALL_SPEED_MS = 10;
     const int MAX_Y = OLED_H - 1;
     const int MAX_X = OLED_W - 1;
