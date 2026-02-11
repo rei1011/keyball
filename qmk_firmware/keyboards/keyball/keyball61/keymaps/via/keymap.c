@@ -66,13 +66,14 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 #    include "lib/oledkit/oledkit.h"
 
-// OLEDの幅
 static const int OLED_W = 128;
-// OLEDの高さ
 static const int OLED_H = 32;
+static const int PADDLE_WIDTH = 20;
 // 移動方向フラグ
 static bool move_right = false;
 static bool move_left  = false;
+// パドルX座標（ボールとの衝突判定で使用）
+static int paddle_x = (OLED_W / 2) - 10;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
@@ -98,15 +99,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 void oledkit_render_paddle(void) {
     // paddleのY座標
     const int PADDLE_Y = OLED_H - 1;
-    // paddleの幅
-    const int PADDLE_WIDTH = 20;
     // paddleが移動できる最大X座標
     const int MAX_X = OLED_W - PADDLE_WIDTH;
     // paddleの速さ
     const int PADDLE_SPEED = 6;
-    // paddleのX座標の初期値（中央付近）
-    static int paddle_x = (OLED_W / 2) - 10;
-    
+
     if (move_right && paddle_x < MAX_X) {
         paddle_x += PADDLE_SPEED;
     }
@@ -126,9 +123,11 @@ void oledkit_render_ball(void) {
     const int BALL_SPEED_MS = 10;
     const int MAX_Y = OLED_H - 1;
     const int CENTER_X = OLED_W / 2;
+    // ボールの初期位置
+    const int INITIAL_BALL_Y = OLED_H / 2;
 
     static int velocity = BALL_SPEED;
-    static int ball_y = OLED_H / 2;  // 開始位置 y=16
+    static int ball_y = INITIAL_BALL_Y;
     static uint32_t last_move_time = 0;
     uint32_t now = timer_read32();
 
@@ -140,12 +139,24 @@ void oledkit_render_ball(void) {
         ball_y += velocity;
         if (ball_y <= 0) {
             ball_y = 0;
-            velocity   = BALL_SPEED;
+            velocity = BALL_SPEED;
         } else if (ball_y >= MAX_Y) {
-            ball_y = MAX_Y;
-            velocity   = -BALL_SPEED;
+            // 床（パドル付近）に到達
+            // ボールがy軸マイナス方向（下向き、velocity > 0）に進んでいるときのみパドル衝突で反転
+            int ball_left  = CENTER_X - 1;
+            int ball_right = CENTER_X + 1;
+            int paddle_right = paddle_x + PADDLE_WIDTH - 1;
+            bool hit_paddle = (velocity > 0) && (ball_right >= paddle_x && ball_left <= paddle_right);
+            if (hit_paddle) {
+                ball_y = MAX_Y;
+                velocity = -BALL_SPEED;
+            } else {
+                // パドルに当たっていない、または上向きで来た → 初期位置に戻す
+                ball_y = INITIAL_BALL_Y;
+                velocity = BALL_SPEED;
+            }
         }
-    }    
+    }
 
     // 幅3・高さ3のドット（中心が center_x, ball_y）
     for (int dx = -1; dx <= 1; dx++) {
