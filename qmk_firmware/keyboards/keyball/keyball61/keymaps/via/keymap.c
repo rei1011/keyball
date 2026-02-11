@@ -127,7 +127,7 @@ void oledkit_render_ball(void) {
     // ボールの初期位置
     const int INITIAL_BALL_Y = OLED_H / 2;
     // パドルに外れたあと、初期位置に戻るまでの待ち時間（ミリ秒）
-    const uint32_t BALL_RESPAWN_MS = 2000;
+    const uint32_t BALL_RESPAWN_MS = 1500;
 
     static int velocity = BALL_SPEED;
     static int ball_y = INITIAL_BALL_Y;
