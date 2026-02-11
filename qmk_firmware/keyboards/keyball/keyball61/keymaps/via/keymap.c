@@ -120,12 +120,11 @@ void oledkit_render_paddle(void) {
 
 void oledkit_render_bouncing_dot(void) {
     static int       dot_y          = OLED_H / 2;  // 開始位置 y=16
-    static int       dir            = -1;  // 最初は y のマイナス方向
+    static int       dir            = 3;
     static uint32_t  last_move_time = 0;
     const int max_y = OLED_H - 1;
     const int center_x = OLED_W / 2;
-    // 幅3・高さ3のドットが x=64 上を y 方向に往復する表示（1秒に1ドット）
-    const int bouncing_dot_speed_ms = 0.1;
+    const int bouncing_dot_speed_ms = 10;
 
     uint32_t now = timer_read32();
     if (last_move_time == 0) {
@@ -136,10 +135,10 @@ void oledkit_render_bouncing_dot(void) {
         dot_y += dir;
         if (dot_y <= 0) {
             dot_y = 0;
-            dir   = 1;
+            dir   = 3;
         } else if (dot_y >= max_y) {
             dot_y = max_y;
-            dir   = -1;
+            dir   = -3;
         }
     }    
 
