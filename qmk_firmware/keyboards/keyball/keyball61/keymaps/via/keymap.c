@@ -119,8 +119,9 @@ void oledkit_render_paddle(void) {
 }
 
 void oledkit_render_bouncing_dot(void) {
+    static const int SPEED = 3;
+    static int velocity = SPEED;
     static int       dot_y          = OLED_H / 2;  // 開始位置 y=16
-    static int       dir            = 3;
     static uint32_t  last_move_time = 0;
     const int max_y = OLED_H - 1;
     const int center_x = OLED_W / 2;
@@ -132,13 +133,13 @@ void oledkit_render_bouncing_dot(void) {
     }
     if (timer_elapsed32(last_move_time) >= bouncing_dot_speed_ms) {
         last_move_time = now;
-        dot_y += dir;
+        dot_y += velocity;
         if (dot_y <= 0) {
             dot_y = 0;
-            dir   = 3;
+            dir   = SPEED;
         } else if (dot_y >= max_y) {
             dot_y = max_y;
-            dir   = -3;
+            dir   = -SPEED;
         }
     }    
 
