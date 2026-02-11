@@ -150,7 +150,6 @@ static void oledkit_render_ball(void) {
             ball_y = INITIAL_BALL_Y;
             velocity = BALL_SPEED;
             ball_hidden = false;
-            last_move_time = now;
         } else {
             return;
         }
