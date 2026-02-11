@@ -146,13 +146,12 @@ static void oledkit_render_ball(void) {
 
     // ボールが消えてから一定時間経過後に初期位置に戻る
     if (ball_hidden) {
-        if (timer_elapsed32(ball_hidden_since) >= BALL_RESPAWN_MS) {
-            ball_y = INITIAL_BALL_Y;
-            velocity = BALL_SPEED;
-            ball_hidden = false;
-        } else {
-            return;
+        if (timer_elapsed32(ball_hidden_since) < BALL_RESPAWN_MS) {
+          return;
         }
+        ball_y = INITIAL_BALL_Y;
+        velocity = BALL_SPEED;
+        ball_hidden = false;
     }
 
     if (last_move_time == 0) {
