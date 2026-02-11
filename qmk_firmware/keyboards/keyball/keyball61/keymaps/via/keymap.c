@@ -187,7 +187,6 @@ static void oledkit_render_ball(void) {
         if (ball_y <= 0) {
             ball_y = 0;
             velocity_y = BALL_SPEED;
-            velocity_x = 0;
         } else if (ball_y >= MAX_Y) {
             bool hit_paddle = ball_hits_paddle(velocity_y, ball_x, BALL_RADIUS);
             if (hit_paddle) {
